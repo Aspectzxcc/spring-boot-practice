@@ -30,13 +30,17 @@
                     const lobbyEvents = document.getElementById('lobbyEvents');
                     lobbyEvents.innerHTML += `<div><b>${data.username}:</b> ${data.message}</div>`;
                 });
+                stompClient.send("/app/lobby/join", {}, JSON.stringify({username: username, message: "joined the lobby"}));
             });
         }
 
         function joinLobby() {
             username = document.getElementById('username').value || "Anonymous";
-            if (!stompClient) connect();
-            stompClient.send("/app/lobby/join", {}, JSON.stringify({username: username, message: "joined the lobby"}));
+            if (!stompClient) {
+                connect();
+            } else {
+                stompClient.send("/app/lobby/join", {}, JSON.stringify({username: username, message: "joined the lobby"}));
+            }
         }
 
         function sendMessage() {
