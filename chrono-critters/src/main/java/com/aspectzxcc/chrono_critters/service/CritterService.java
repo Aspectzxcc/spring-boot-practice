@@ -1,14 +1,14 @@
 package com.aspectzxcc.chrono_critters.service;
 
-import org.springframework.stereotype.Service;
-
-import com.aspectzxcc.chrono_critters.repository.CritterRepository;
-import com.aspectzxcc.chrono_critters.model.Critter;
-
-import lombok.RequiredArgsConstructor;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.aspectzxcc.chrono_critters.model.Critter;
+import com.aspectzxcc.chrono_critters.repository.CritterRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
