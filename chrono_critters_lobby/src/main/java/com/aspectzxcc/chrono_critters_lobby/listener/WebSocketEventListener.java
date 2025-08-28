@@ -8,6 +8,10 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import com.aspectzxcc.chrono_critters_lobby.model.LobbyEvent;
 
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+
+import java.util.Optional;
+
 @Component
 public class WebSocketEventListener {
 
@@ -16,10 +20,15 @@ public class WebSocketEventListener {
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-        LobbyEvent disconnectEvent = new LobbyEvent();
-        disconnectEvent.setUsername("Anonymous");
-        disconnectEvent.setMessage("Left the lobby");
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        String username = Optional.ofNullable(headerAccessor.getSessionAttributes())
+            .map(attrs -> (String) attrs.get("username"))
+            .orElse("Anonymous");
 
+        // Always broadcast the disconnect event
+        LobbyEvent disconnectEvent = new LobbyEvent();
+        disconnectEvent.setUsername(username);
+        disconnectEvent.setMessage("left the lobby");
         simpMessagingTemplate.convertAndSend("/topic/lobby", disconnectEvent);
     }
 }
