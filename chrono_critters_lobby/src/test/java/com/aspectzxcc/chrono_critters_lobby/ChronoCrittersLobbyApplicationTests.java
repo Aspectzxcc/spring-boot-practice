@@ -1,4 +1,4 @@
-package com.chronocritters.chrono_critters_lobby;
+package com.aspectzxcc.chrono_critters_lobby;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

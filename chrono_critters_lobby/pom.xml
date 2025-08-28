@@ -8,7 +8,7 @@
 		<version>3.5.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.chronocritters</groupId>
+	<groupId>com.aspectzxcc</groupId>
 	<artifactId>chrono_critters_lobby</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>chrono_critters_lobby</name>

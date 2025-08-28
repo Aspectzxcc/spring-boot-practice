@@ -1,4 +1,4 @@
-package com.chronocritters.chrono_critters_lobby;
+package com.aspectzxcc.chrono_critters_lobby;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
