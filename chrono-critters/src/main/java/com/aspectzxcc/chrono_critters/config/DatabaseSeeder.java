@@ -12,7 +12,7 @@ import java.util.*;
 public class DatabaseSeeder {
     @Bean
     CommandLineRunner seedDatabase(PlayerRepository playerRepository, CritterRepository critterRepository) {
-        return args -> {
+        return _ -> {
             // Reset collections to avoid duplicates
             playerRepository.deleteAll();
             critterRepository.deleteAll();

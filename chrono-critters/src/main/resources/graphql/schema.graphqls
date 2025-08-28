@@ -1,0 +1,50 @@
+type Player {
+    id: String
+    username: String
+    stats: Stats
+    critterRoster: [Critter]
+}
+
+type Critter {
+    id: String
+    name: String
+    type: CritterType
+    baseStats: BaseStats
+    abilities: [Ability]
+}
+
+type BaseStats {
+    maxHealth: Int
+    attack: Int
+    defense: Int
+}
+
+type Stats {
+    wins: Int
+    losses: Int
+}
+
+type Ability {
+    name: String
+    power: Int
+    type: AbilityType
+}
+
+enum CritterType {
+    FIRE
+    WATER
+    GRASS
+}
+
+enum AbilityType {
+    OFFENSIVE
+    DEFENSIVE
+    SUPPORT
+}
+
+type Query {
+    players: [Player]
+    playerById(id: String!): Player
+    critters: [Critter]
+    critterById(id: String!): Critter
+}
