@@ -1,18 +1,25 @@
 package com.aspectzxcc.chrono_critters_user.config;
 
+import java.util.Arrays;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.aspectzxcc.chrono_critters_user.model.*;
-import com.aspectzxcc.chrono_critters_user.model.enums.*;
-import com.aspectzxcc.chrono_critters_user.repository.*;
-
-import java.util.*;
+import com.aspectzxcc.chrono_critters_user.model.Ability;
+import com.aspectzxcc.chrono_critters_user.model.BaseStats;
+import com.aspectzxcc.chrono_critters_user.model.Critter;
+import com.aspectzxcc.chrono_critters_user.model.Player;
+import com.aspectzxcc.chrono_critters_user.model.Stats;
+import com.aspectzxcc.chrono_critters_user.model.enums.AbilityType;
+import com.aspectzxcc.chrono_critters_user.model.enums.CritterType;
+import com.aspectzxcc.chrono_critters_user.repository.CritterRepository;
+import com.aspectzxcc.chrono_critters_user.repository.PlayerRepository;
 
 @Configuration
 public class DatabaseSeeder {
     @Bean
+    @SuppressWarnings("unused")
     CommandLineRunner seedDatabase(PlayerRepository playerRepository, CritterRepository critterRepository) {
         return _ -> {
             // Reset collections to avoid duplicates
