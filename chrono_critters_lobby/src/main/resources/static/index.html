@@ -10,6 +10,7 @@
     <h2>Chrono Critters Lobby</h2>
     <input type="text" id="username" placeholder="Enter username" />
     <button onclick="joinLobby()">Join Lobby</button>
+    <button onclick="disconnectLobby()">Disconnect</button>
     <br><br>
     <input type="text" id="message" placeholder="Enter message" />
     <button onclick="sendMessage()">Send Message</button>
@@ -42,6 +43,16 @@
             const msg = document.getElementById('message').value;
             if (stompClient && username) {
                 stompClient.send("/app/lobby/message", {}, JSON.stringify({username: username, message: msg}));
+            }
+        }
+
+        function disconnectLobby() {
+            if (stompClient) {
+                stompClient.disconnect(() => {
+                    const lobbyEvents = document.getElementById('lobbyEvents');
+                    lobbyEvents.innerHTML += `<div><b>${username}:</b> Left the Lobby</div>`;
+                });
+                stompClient = null;
             }
         }
     </script>
