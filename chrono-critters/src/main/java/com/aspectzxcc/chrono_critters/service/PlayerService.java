@@ -27,15 +27,6 @@ public class PlayerService {
         return playerRepository.findById(id);
     }
     
-    public Player updatePlayer(String id, Player updatedPlayer) {
-        return playerRepository.findById(id)
-            .map(_ -> {
-                updatedPlayer.setId(id);
-                return playerRepository.save(updatedPlayer);
-            })
-            .orElse(null);
-    }
-    
     public void deletePlayer(String id) {
         playerRepository.deleteById(id);
     }
