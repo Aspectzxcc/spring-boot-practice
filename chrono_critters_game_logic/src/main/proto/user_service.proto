@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package user;
+
+option java_package = "com.aspectzxcc.chrono_critters_user.grpc";
+option java_multiple_files = true;
+
+// Ability model
+message Ability {
+  string name = 1;
+  int32 power = 2;
+  string type = 3; // OFFENSIVE, DEFENSIVE, SUPPORT
+}
+
+// BaseStats model
+message BaseStats {
+  int32 hp = 1;
+  int32 attack = 2;
+  int32 defense = 3;
+}
+
+// Critter model
+message Critter {
+  string id = 1;
+  string name = 2;
+  string type = 3; // FIRE, WATER, GRASS
+  BaseStats base_stats = 4;
+  repeated Ability abilities = 5;
+}
+
+// Stats model
+message Stats {
+  int32 wins = 1;
+  int32 losses = 2;
+}
+
+// Player model
+message Player {
+  string id = 1;
+  string username = 2;
+  Stats stats = 3;
+  repeated Critter critter_roster = 4;
+}
+
+// Request/Response for GetPlayerProfile
+message GetPlayerProfileRequest {
+  string player_id = 1;
+}
+
+message GetPlayerProfileResponse {
+  Player player = 1;
+}
+
+// Request/Response for UpdateMatchHistory
+message UpdateMatchHistoryRequest {
+  string player_id = 1;
+  bool won = 2;
+}
+
+message UpdateMatchHistoryResponse {
+  Player player = 1;
+}
+
+// Service definition
+service UserService {
+  rpc GetPlayerProfile(GetPlayerProfileRequest) returns (GetPlayerProfileResponse);
+  rpc UpdateMatchHistory(UpdateMatchHistoryRequest) returns (UpdateMatchHistoryResponse);
+}
