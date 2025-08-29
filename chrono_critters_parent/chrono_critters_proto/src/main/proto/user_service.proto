@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package user;
 
+option java_multiple_files = false;
 option java_package = "com.aspectzxcc.chrono_critters_proto.user";
 option java_outer_classname = "UserServiceProto";
 
@@ -19,16 +20,47 @@ message PlayerRequest {
 message PlayerResponse {
   string id = 1;
   string username = 2;
-  int32 level = 3;
-  int32 wins = 4;
-  int32 losses = 5;
-  repeated Critter critters = 6;
+  Stats stats = 3;
+  repeated Critter critters = 4;
+}
+
+message Stats {
+  int32 wins = 1;
+  int32 losses = 2;
 }
 
 message Critter {
   string id = 1;
   string name = 2;
-  string type = 3;
+  CritterType type = 3;
+  BaseStats base_stats = 4;
+  repeated Ability abilities = 5;
+}
+
+enum CritterType {
+  CRITTER_UNKNOWN = 0;
+  FIRE = 1;
+  WATER = 2;
+  GRASS = 3;
+}
+
+message BaseStats {
+  int32 maxHealth = 1;
+  int32 attack = 2;
+  int32 defense = 3;
+}
+
+message Ability {
+  string name = 1;
+  int32 power = 2;
+  AbilityType type = 3;
+}
+
+enum AbilityType {
+  ABILITY_UNKNOWN = 0;
+  OFFENSIVE = 1;
+  DEFENSIVE = 2;
+  SUPPORT = 3;
 }
 
 message MatchHistoryUpdateRequest {
