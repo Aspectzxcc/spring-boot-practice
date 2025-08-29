@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class PlayerGraphQLController {
+public class GraphQLController {
     private final PlayerService playerService;
     private final CritterService critterService;
 
