@@ -2,43 +2,56 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Chrono Critters Lobby</title>
+    <title>Lobby Player List</title>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 2em; }
-        #playerList { margin-top: 1em; }
-        #playerList li { margin-bottom: 0.5em; }
+        #player-list { margin-top: 1em; }
+        #session-id { font-weight: bold; }
     </style>
 </head>
 <body>
-    <h2>Chrono Critters Lobby</h2>
-    <ul id="playerList"></ul>
-
+    <h1>Lobby</h1>
+    <div>Your Session ID: <span id="session-id"></span></div>
+    <div id="player-list">
+        <h2>Players in Lobby:</h2>
+        <ul id="players"></ul>
+    </div>
     <script>
+        // Generate a UUID with player- prefix
+        function generatePlayerId() {
+            return 'player-' + ([1e7]+-1e3+-4e3+-8e3+-1e11)
+                .replace(/[018]/g, c =>
+                    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+                );
+        }
+
+        const playerId = generatePlayerId();
+        document.getElementById('session-id').textContent = playerId;
+
         let stompClient = null;
 
         function connect() {
             const socket = new SockJS('/ws');
             stompClient = Stomp.over(socket);
-            stompClient.connect({}, function () {
+            stompClient.connect({ 'player-id': playerId }, function () {
                 stompClient.subscribe('/topic/lobby', function (message) {
-                    const players = JSON.parse(message.body);
-                    updatePlayerList(players);
+                    const ids = JSON.parse(message.body);
+                    updatePlayerList(ids);
                 });
-                // Just connect, let backend handle player creation
-                stompClient.send("/app/lobby/join");
-                stompClient.send("/app/lobby/list");
+                // Automatically join lobby on connect
+                stompClient.send("/app/lobby/join", {}, playerId);
             });
         }
 
-        function updatePlayerList(players) {
-            const list = document.getElementById('playerList');
-            list.innerHTML = '';
-            players.forEach(p => {
+        function updatePlayerList(ids) {
+            const ul = document.getElementById('players');
+            ul.innerHTML = '';
+            ids.forEach(id => {
                 const li = document.createElement('li');
-                li.textContent = `ID: ${p.id} | Username: ${p.username}`;
-                list.appendChild(li);
+                li.textContent = id;
+                ul.appendChild(li);
             });
         }
 
