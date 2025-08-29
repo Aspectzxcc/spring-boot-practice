@@ -9,21 +9,21 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class LobbyService {
-    private final Map<String, String> sessionToPlayerId = new ConcurrentHashMap<>();
+    private final Map<String, String> sessionToPlayer = new ConcurrentHashMap<>();
 
     public void addPlayer(String sessionId, String playerId) {
-        sessionToPlayerId.put(sessionId, playerId);
+        sessionToPlayer.put(sessionId, playerId);
     }
 
     public void removePlayerBySessionId(String sessionId) {
-        sessionToPlayerId.remove(sessionId);
+        sessionToPlayer.remove(sessionId);
     }
 
     public Set<String> getPlayerIds() {
-        return Collections.unmodifiableSet(Set.copyOf(sessionToPlayerId.values()));
+        return Collections.unmodifiableSet(Set.copyOf(sessionToPlayer.values()));
     }
 
     public void clearLobby() {
-        sessionToPlayerId.clear();
+        sessionToPlayer.clear();
     }
 }

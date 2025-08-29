@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Lobby Player List</title>
+    <title>Lobby & Matchmaking</title>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 2em; }
-        #player-list { margin-top: 1em; }
+        #player-list, #queue-list { margin-top: 1em; }
         #session-id { font-weight: bold; }
+        #queue-status { margin-top: 1em; font-weight: bold; }
+        button { margin-right: 1em; }
     </style>
 </head>
 <body>
@@ -18,6 +20,18 @@
         <h2>Players in Lobby:</h2>
         <ul id="players"></ul>
     </div>
+    <hr>
+    <h2>Matchmaking Queue</h2>
+    <div>
+        <button id="join-queue-btn">Join Queue</button>
+        <button id="leave-queue-btn" disabled>Leave Queue</button>
+    </div>
+    <div id="queue-status">Not in queue</div>
+    <div id="queue-list">
+        <h3>Players in Queue:</h3>
+        <ul id="queue"></ul>
+    </div>
+    <div id="match-result"></div>
     <script>
         // Generate a UUID with player- prefix
         function generatePlayerId() {
@@ -31,6 +45,7 @@
         document.getElementById('session-id').textContent = playerId;
 
         let stompClient = null;
+        let inQueue = false;
 
         function connect() {
             const socket = new SockJS('/ws');
@@ -39,6 +54,15 @@
                 stompClient.subscribe('/topic/lobby', function (message) {
                     const ids = JSON.parse(message.body);
                     updatePlayerList(ids);
+                });
+                stompClient.subscribe('/topic/queue', function (message) {
+                    const queueIds = JSON.parse(message.body);
+                    updateQueueList(queueIds);
+                    updateQueueStatus(queueIds);
+                });
+                stompClient.subscribe('/topic/match', function (message) {
+                    const match = JSON.parse(message.body);
+                    showMatchResult(match);
                 });
                 // Automatically join lobby on connect
                 stompClient.send("/app/lobby/join", {}, playerId);
@@ -54,6 +78,37 @@
                 ul.appendChild(li);
             });
         }
+
+        function updateQueueList(queueIds) {
+            const ul = document.getElementById('queue');
+            ul.innerHTML = '';
+            queueIds.forEach(id => {
+                const li = document.createElement('li');
+                li.textContent = id;
+                ul.appendChild(li);
+            });
+        }
+
+        function updateQueueStatus(queueIds) {
+            inQueue = queueIds.includes(playerId);
+            document.getElementById('queue-status').textContent = inQueue ? "You are in the queue" : "Not in queue";
+            document.getElementById('join-queue-btn').disabled = inQueue;
+            document.getElementById('leave-queue-btn').disabled = !inQueue;
+        }
+
+        function showMatchResult(match) {
+            if (match.includes(playerId)) {
+                document.getElementById('match-result').textContent = "Match found! Opponent: " + match.find(id => id !== playerId);
+            }
+        }
+
+        document.getElementById('join-queue-btn').onclick = function() {
+            stompClient.send("/app/matchmaking/join", {}, playerId);
+        };
+
+        document.getElementById('leave-queue-btn').onclick = function() {
+            stompClient.send("/app/matchmaking/leave", {}, playerId);
+        };
 
         connect();
     </script>
