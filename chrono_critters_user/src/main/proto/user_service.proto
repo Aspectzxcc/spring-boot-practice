@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package user;
+
+option java_package = "userGrpc";
+option java_multiple_files = false;
+option java_outer_classname = "UserGrpcService";
+
+// Only the minimal player info needed for game logic
+message Player {
+  string id = 1;
+  string username = 2;
+  int32 wins = 3;
+  int32 losses = 4;
+}
+
+// Request/Response for GetPlayerProfile
+message GetPlayerProfileRequest {
+  string player_id = 1;
+}
+
+message GetPlayerProfileResponse {
+  Player player = 1;
+}
+
+// Request/Response for UpdateMatchHistory
+message UpdateMatchHistoryRequest {
+  string player_id = 1;
+  bool won = 2;
+}
+
+message UpdateMatchHistoryResponse {
+  Player player = 1;
+}
+
+// UserService definition
+service UserService {
+  rpc GetPlayerProfile(GetPlayerProfileRequest) returns (GetPlayerProfileResponse);
+  rpc UpdateMatchHistory(UpdateMatchHistoryRequest) returns (UpdateMatchHistoryResponse);
+}
