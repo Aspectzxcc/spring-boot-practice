@@ -1,18 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>com.aspectzxcc</groupId>
-    <artifactId>chrono-critters-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>Chrono Critters Parent</name>
-
-    <modules>
-        <module>chrono_critters_user</module>
-        <module>chrono_critters_game_logic</module>
-        <module>chrono_critters_lobby</module>
-        <!-- Add other shared modules here if needed -->
-    </modules>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.aspectzxcc</groupId>
+  <artifactId>chrono-critters-parent</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Chrono Critters Parent</name>
+  <modules>
+    <module>chrono_critters_user</module>
+    <module>chrono_critters_game_logic</module>
+    <module>chrono_critters_lobby</module>
+    <!-- Add other shared modules here if needed -->
+    <module>chrono_critters_proto</module>
+  </modules>
 </project>

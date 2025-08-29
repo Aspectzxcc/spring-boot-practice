@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package user;
+
+option java_package = "com.aspectzxcc.chrono_critters_proto.user";
+option java_outer_classname = "UserServiceProto";
+
+// Service definition
+service UserService {
+  rpc GetPlayer (PlayerRequest) returns (PlayerResponse);
+  rpc UpdateMatchHistory (MatchHistoryUpdateRequest) returns (MatchHistoryUpdateResponse);
+}
+
+// Requests and responses
+message PlayerRequest {
+  string id = 1;
+}
+
+message PlayerResponse {
+  string id = 1;
+  string username = 2;
+  int32 level = 3;
+  int32 wins = 4;
+  int32 losses = 5;
+  repeated Critter critters = 6;
+}
+
+message Critter {
+  string id = 1;
+  string name = 2;
+  string type = 3;
+}
+
+message MatchHistoryUpdateRequest {
+  string player_id = 1;
+  bool won = 2;
+}
+
+message MatchHistoryUpdateResponse {
+  bool success = 1;
+}
