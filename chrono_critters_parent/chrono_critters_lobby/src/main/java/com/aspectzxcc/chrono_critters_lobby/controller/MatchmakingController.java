@@ -25,7 +25,13 @@ public class MatchmakingController {
         matchmakingService.joinQueue(playerId);
         List<String> match = matchmakingService.tryMatch();
         if (!match.isEmpty()) {
-            messagingTemplate.convertAndSend("/topic/match", match);
+            for (String matchedPlayerId : match) {
+                messagingTemplate.convertAndSendToUser(
+                    matchedPlayerId,
+                    "/queue/match",
+                    match
+                );
+            }
         }
         return matchmakingService.getQueue();
     }

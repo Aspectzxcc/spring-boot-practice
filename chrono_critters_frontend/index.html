@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Chrono-Critters Landing</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 2em; }
         #critter-list { margin-bottom: 2em; }
+        #queue-list { margin-top: 2em; }
         button { padding: 0.5em 1em; font-size: 1em; }
     </style>
 </head>
@@ -17,9 +20,22 @@
             <li>Loading...</li>
         </ul>
     </div>
-    <button onclick="window.location.href='matchmaking.html'">Enter Matchmaking</button>
+    <button id="matchmaking-btn">Enter Matchmaking</button>
+    <div id="queue-list">
+        <h2>Matchmaking Queue</h2>
+        <ul id="queue-ul">
+            <li>No players in queue.</li>
+        </ul>
+    </div>
     <script>
-        async function loadCritters() {
+        // --- Generate a random playerId ---
+        function generatePlayerId() {
+            return 'player_' + Math.random().toString(36).substr(2, 8);
+        }
+        const playerId = generatePlayerId();
+
+        // --- Critter list loading (unchanged) ---
+        async function loadCritters(playerId) {
             const ul = document.getElementById('critters-ul');
             try {
                 const response = await fetch('http://localhost:8080/graphql', {
@@ -27,7 +43,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         query: 'query($id: String!) { playerById(id: $id) { username critterRoster { name type } } }',
-                        variables: { id: "p1" }
+                        variables: { id: playerId }
                     })
                 });
                 const data = await response.json();
@@ -39,13 +55,68 @@
                         ul.appendChild(li);
                     });
                 } else {
-                    ul.innerHTML = '<li>No critters found for player p1.</li>';
+                    ul.innerHTML = `<li>No critters found for player ${playerId}.</li>`;
                 }
             } catch (e) {
                 ul.innerHTML = '<li>Failed to load critters.</li>';
             }
         }
-        loadCritters();
+
+        // Update critter list header to show playerId
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('#critter-list h2').textContent = `Player ${playerId}'s Critters`;
+            loadCritters(playerId);
+        });
+
+        // --- Matchmaking connection (connect immediately) ---
+        let stompClient = null;
+        let isConnected = false;
+
+        function updateQueue(queue) {
+            const queueUl = document.getElementById('queue-ul');
+            queueUl.innerHTML = '';
+            if (!queue || queue.length === 0) {
+                queueUl.innerHTML = '<li>No players in queue.</li>';
+            } else {
+                queue.forEach(id => {
+                    const li = document.createElement('li');
+                    li.textContent = id;
+                    queueUl.appendChild(li);
+                });
+            }
+        }
+
+        function connectWebSocket() {
+            const socket = new SockJS('http://localhost:8081/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function () {
+                isConnected = true;
+                // Subscribe to match result
+                stompClient.subscribe('/topic/match', function (message) {
+                    alert('Match found: ' + message.body);
+                });
+                // Subscribe to queue updates
+                stompClient.subscribe('/topic/queue', function (message) {
+                    const queue = JSON.parse(message.body);
+                    updateQueue(queue);
+                });
+            });
+        }
+
+        // Connect immediately on page load
+        connectWebSocket();
+
+        // --- Separate join functionality ---
+        function joinMatchmaking() {
+            if (stompClient && isConnected) {
+                stompClient.send("/app/matchmaking/join", {}, playerId);
+                alert('Joined matchmaking queue as ' + playerId);
+            } else {
+                alert('WebSocket not connected yet. Please wait and try again.');
+            }
+        }
+
+        document.getElementById('matchmaking-btn').onclick = joinMatchmaking;
     </script>
 </body>
 </html>
