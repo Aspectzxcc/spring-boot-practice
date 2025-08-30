@@ -28,7 +28,7 @@ public class MatchmakingController {
             for (String matchedPlayerId : match) {
                 messagingTemplate.convertAndSendToUser(
                     matchedPlayerId,
-                    "/queue/match",
+                    "/match",
                     match
                 );
             }
