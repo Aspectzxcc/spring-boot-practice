@@ -18,7 +18,7 @@ public class BattleController {
     private final BattleService battleService;
 
     // Lobby service creates a new battle
-    @PostMapping("/internal/battle")
+    @PostMapping("/battle")
     public ResponseEntity<BattleState> createBattle(
             @RequestParam String battleId,
             @RequestParam String player1Id,
