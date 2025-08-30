@@ -23,13 +23,8 @@ public class MatchmakingDisconnectListener {
         String sessionId = sha.getSessionId();
 
         if (sessionId != null) {
-            String playerId = matchmakingService.getPlayerIdBySession(sessionId);
-            matchmakingService.unbindSession(sessionId);
-
-            if (playerId != null) {
-                matchmakingService.leaveQueue(playerId);
-                messagingTemplate.convertAndSend("/topic/queue", matchmakingService.getQueue());
-            }
+            matchmakingService.leaveQueue(sessionId);
+            messagingTemplate.convertAndSend("/topic/queue", matchmakingService.getQueue());
         }
     }
 }

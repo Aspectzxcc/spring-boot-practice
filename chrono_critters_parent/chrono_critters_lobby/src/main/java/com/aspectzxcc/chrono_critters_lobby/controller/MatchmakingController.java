@@ -1,7 +1,9 @@
 package com.aspectzxcc.chrono_critters_lobby.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -21,8 +23,10 @@ public class MatchmakingController {
 
     @MessageMapping("/matchmaking/join")
     @SendTo("/topic/queue")
-    public List<String> joinQueue(@Payload String playerId) {
-        matchmakingService.joinQueue(playerId);
+    public List<String> joinQueue(@Payload String playerId, @Headers Map<String, Object> headers) {
+        if (playerId != null) {
+            matchmakingService.joinQueue(playerId);
+        }
         List<String> match = matchmakingService.tryMatch();
         if (!match.isEmpty()) {
             for (String matchedPlayerId : match) {
@@ -38,8 +42,10 @@ public class MatchmakingController {
 
     @MessageMapping("/matchmaking/leave")
     @SendTo("/topic/queue")
-    public List<String> leaveQueue(@Payload String playerId) {
-        matchmakingService.leaveQueue(playerId);
+    public List<String> leaveQueue(@Payload String playerId, @Headers Map<String, Object> headers) {
+        if (playerId != null) {
+            matchmakingService.leaveQueue(playerId);
+        }
         return matchmakingService.getQueue();
     }
 }
