@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chrono-Critters Landing</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        #critter-list { margin-bottom: 2em; }
+        button { padding: 0.5em 1em; font-size: 1em; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Chrono-Critters!</h1>
+    <div id="critter-list">
+        <h2>Player p1's Critters</h2>
+        <ul id="critters-ul">
+            <li>Loading...</li>
+        </ul>
+    </div>
+    <button onclick="window.location.href='matchmaking.html'">Enter Matchmaking</button>
+    <script>
+        async function loadCritters() {
+            const ul = document.getElementById('critters-ul');
+            try {
+                const response = await fetch('http://localhost:8080/graphql', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query: 'query($id: String!) { playerById(id: $id) { username critterRoster { name type } } }',
+                        variables: { id: "p1" }
+                    })
+                });
+                const data = await response.json();
+                ul.innerHTML = '';
+                if (data.data && data.data.playerById && data.data.playerById.critterRoster) {
+                    data.data.playerById.critterRoster.forEach(critter => {
+                        const li = document.createElement('li');
+                        li.textContent = `${critter.name} (${critter.type})`;
+                        ul.appendChild(li);
+                    });
+                } else {
+                    ul.innerHTML = '<li>No critters found for player p1.</li>';
+                }
+            } catch (e) {
+                ul.innerHTML = '<li>Failed to load critters.</li>';
+            }
+        }
+        loadCritters();
+    </script>
+</body>
+</html>
